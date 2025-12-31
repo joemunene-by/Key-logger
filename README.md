@@ -1,6 +1,8 @@
-# Ultimate Python Key Logger
+# Ultimate Python Key Logger & Analyzer
 
-A comprehensive surveillance tool built for cybersecurity research. This key logger goes beyond simple keystroke capturing to include system monitoring, multimedia recording, and persistence.
+![Banner](https://img.shields.io/badge/Status-Active-brightgreen) ![Python](https://img.shields.io/badge/Python-3.x-blue)
+
+A comprehensive surveillance tool built for cybersecurity research. Capture data, compress it, email it, and analyze it with a custom dashboard.
 
 ## ⚠️ Disclaimer
 
@@ -18,13 +20,15 @@ Unauthorized use of surveillance software is illegal. Ensure you have explicit p
   - **Webcam**: Takes photos from the webcam.
   - **Microphone**: Records short audio clips.
 - **Encryption**: Logs are encrypted (AES/Fernet).
-- **Persistence**: Automatically runs on system startup (copies to AppData + Registry key).
-- **Email Reporting**: Sends all collected data to your email.
+- **Compression**: Bundles all logs, images, and audio into a `logs.zip` file.
+- **Persistence**: Automatically runs on system startup.
+- **Email Reporting**: Sends the compressed ZIP to your email.
+- **Log Analysis**: Visual dashboard to analyze decrypted logs.
 
 ## Prerequisites
 
 - Python 3.x
-- Windows OS (required for persistence and window logging)
+- Windows OS
 
 ## Installation
 
@@ -43,29 +47,40 @@ Unauthorized use of surveillance software is illegal. Ensure you have explicit p
 
 ## Usage
 
-1. **Configuration**:
-    Edit `main.py` to set your email credentials:
+### 1. Key Logger (`main.py`)
 
-    ```python
-    keylogger = KeyLogger(
-        time_interval=300,         # Report interval in seconds
-        email="your_email@gmail.com",
-        password="your_app_password"
-    )
-    ```
-
-2. **Run**:
+1. **Run**:
 
     ```bash
     python main.py
     ```
 
-3. **Output**:
+    *The email is pre-configured to `joemunene984@gmail.com`. Ensure you update the password in the script.*
+
+2. **Output**:
     - `keylog.enc`: Encrypted log.
-    - `screenshot_*.png`: Screenshots.
-    - `webcam_*.jpg`: Webcam photos.
-    - `audio_*.wav`: Audio recordings.
+    - `logs_*.zip`: Temporary zip files sent via email.
+    - `key.key`: The encryption key.
 
-## Decryption
+### 2. Log Analyzer (`log_analyzer.py`)
 
-Use the `key.key` generated on the first run to decrypt your logs (see `main.py` logic or create a decryption script).
+1. **Purpose**: Decrypts `keylog.enc` and visualizes "Top 5 Used Apps".
+2. **Run**:
+
+    ```bash
+    python log_analyzer.py
+    ```
+
+3. **Result**:
+    - Decrypted text saved to `keylog_decrypted.txt`.
+    - A bar chart window pops up showing usage statistics.
+
+## Detection Logic (Educational)
+
+This tool simulates malware behavior by:
+
+- Hooking keyboard APIs (`SetWindowsHookEx` via pynput).
+- Adding Registry Run keys.
+- Accessing sensitive hardware (Webcam/Mic).
+
+Modern EDRs will flag this. To make it "stealthier" (in a research context), one would typically rewrite it in C/C++, use syscalls directly, and obfuscate the binary, but Python is inherently noisy.
