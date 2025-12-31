@@ -15,7 +15,8 @@ Unauthorized use of surveillance software is illegal. Ensure you have explicit p
 - **Active Window Logging**: Records the window title.
 - **Clipboard Monitoring**: Logs copied text.
 - **System Information**: Logs IP, Hostname, etc.
-- **Geolocation**: Logs approximate location (City, Country, ISP) on startup.
+- **Geolocation**: Logs City, Country, ISP on startup.
+- **Process Monitor**: Logs list of running processes on startup.
 - **Multimedia Recording**:
   - **Screenshots**: Captures screen periodically.
   - **Webcam**: Takes photos from the webcam.
