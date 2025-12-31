@@ -2,3 +2,8 @@ pynput
 Pillow
 pywin32
 cryptography
+pyperclip
+sounddevice
+scipy
+numpy
+opencv-python
